@@ -84,7 +84,6 @@ elif page == "Dashboard":
         return wcss
 
     def main():
-        # Load and preprocess data
         data2 = pd.read_csv("https://raw.githubusercontent.com/sanfla/Customer_Segemtation/main/data_new.csv")
 
         binary = [col for col in data2.columns if data2[col].nunique() == 2]
@@ -100,19 +99,18 @@ elif page == "Dashboard":
         scaler = StandardScaler()
         scaled_data = scaler.fit_transform(encoded_data)
 
-        # Elbow method to determine optimal number of clusters
-        max_clusters = 10  # Use a fixed value for non-interactive version
+        max_clusters = st.slider('Pilih Maksimum Jumlah Kluster untuk Metode Elbow', min_value=2, max_value=15, value=10)
         wcss = elbow(scaled_data, max_clusters)
         plt.figure(figsize=(8, 5))
         plt.plot(range(1, max_clusters + 1), wcss, marker='o')
         plt.title('The Elbow Method')
         plt.xlabel('Number of clusters')
         plt.ylabel('WCSS')
-        plt.savefig("elbow_method.png")
-        st.image("elbow_method.png")
+        st.pyplot(plt.gcf())
+        plt.close()
 
-        num_clusters = 3  
-
+        num_clusters = st.slider('Pilih Jumlah Kluster', min_value=2, max_value=15, value=3)
+        
         kmeans = KMeans(n_clusters=num_clusters, n_init=10, random_state=42)
         cluster_labels = kmeans.fit_predict(scaled_data)
         silhouette_avg = silhouette_score(scaled_data, cluster_labels)
@@ -133,8 +131,8 @@ elif page == "Dashboard":
         plt.xlabel('Income')
         plt.ylabel('Pengeluaran_2thn')
         plt.legend()
-        plt.savefig("clusters.png")
-        st.image("clusters.png")
+        st.pyplot(plt.gcf())
+        plt.close()
 
         plt.figure(figsize=(10, 6))
         for i in range(num_clusters):
@@ -145,8 +143,8 @@ elif page == "Dashboard":
         plt.xlabel('Age')
         plt.ylabel('Recency')
         plt.legend()
-        plt.savefig("clusters_age_recency.png")
-        st.image("clusters_age_recency.png")
+        st.pyplot(plt.gcf())
+        plt.close()
 
     if __name__ == "__main__":
         main()
